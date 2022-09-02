@@ -2,15 +2,29 @@
 #![allow(non_camel_case_types)]
 #![allow(dead_code)]
 #![allow(unused_assignments)]
+#![allow(unused_imports)]
 #![allow(unused_variables)]
-
+mod overwrite_data;
+use crate::overwrite_data::overwrite_data;
+mod get_file;
+use crate::get_file::get_file;
+mod init_json;
+use crate::init_json::{init_json, Json_Structures};
+mod make_first_entry;
+use crate::make_first_entry::make_first_entry;
+mod make_entry;
+use crate::make_entry::make_entry;
+mod do_if_logic;
+use crate::do_if_logic::do_if_logic;
+mod update_entry;
+use crate::update_entry::update_entry;
 extern crate serde_json;
 use serde_json::Value;
-use std::{path::Path, fs::{File}, io::{Read, Write}, collections::{HashMap}, process::{exit}};
+use std::{collections::{HashMap}, process::{exit}};
 use crate::Operations::{ADD, SUB, MTP, DIV};
 use crate::Logic::{True, False};
 use crate::LinearFn::{MakeEntry, UpdateEntry};
-#[derive(Clone)]
+/*#[derive(Clone)]
 pub struct Json_Structures
 {
     pub outer: String,
@@ -19,7 +33,7 @@ pub struct Json_Structures
     pub new_inner: String, //this implementation uses one data field and adds new entrys at the top,
     pub new_inner_top_down: String, //
     pub final_inner: String //later implementations will address more complex directionality
-}
+}*/
 #[derive(Clone)]
 pub enum Operations
 {
@@ -34,7 +48,7 @@ pub enum Logic
     True,
     False
 }
-
+#[derive(Clone)]
 pub enum LinearFn
 {
     MakeEntry,
@@ -68,15 +82,15 @@ pub fn main()
     let mut json_block: String;
     (json_block, exists)  = get_file(full_filename.clone(), exists);
     dbg!(exists);
-   /* json_block = init_json(jstructure.clone());
+    json_block = init_json(jstructure.clone());
     json_block = make_first_entry(
         json_block.clone().to_string(), "key0".to_string(), "data".to_string(), "6".to_string()
     );
     json_block = make_entry(
-        json_block.clone().to_string(), "key7".to_string(), "data".to_string(), "420".to_string(), jstructure, top_down
-    );*/
+        json_block.clone().to_string(), "key7".to_string(), "data".to_string(), "420".to_string(), jstructure.clone(), top_down
+    );
     json_block = make_entry(
-        json_block.clone().to_string(), "key420".to_string(), "data".to_string(), "4233330".to_string(), jstructure, top_down
+        json_block.clone().to_string(), "key420".to_string(), "data".to_string(), "4233330".to_string(), jstructure.clone(), top_down
     );
     //json_block = update_entry(json_block.clone(), "key1".to_string(), "data".to_string(), jstructure, ADD, 1);
     //overwrite_data(json_block.clone(), full_filename);
@@ -96,7 +110,7 @@ pub fn main()
     overwrite_data(json_block.clone(), full_filename);
     dbg!(json_block.clone());
 }
-
+/*
 pub fn overwrite_data(json_block: String, full_filename: String)
 {
     let mut  file = File::create(full_filename.clone()).expect("error opening json file");
@@ -136,7 +150,6 @@ pub fn init_json( jstructure: Json_Structures ) -> String
     //dbg!(&json_block);
     return json_block;
 }
-
 pub fn make_first_entry(mut json_block: String, key: String, data:  String, n: String) -> String
 {
     let t_len = key.len();
@@ -146,7 +159,6 @@ pub fn make_first_entry(mut json_block: String, key: String, data:  String, n: S
     json_block.insert_str(16+d_len+t_len ,&n);//accounting for key and data here
     return json_block;
 }
-
 pub fn make_entry(mut json_block: String, key: String, data:  String, n: String, jstructure: Json_Structures, top_down: bool) -> String
 {
     let t_len = key.len();
@@ -165,7 +177,6 @@ pub fn make_entry(mut json_block: String, key: String, data:  String, n: String,
     }
     new_inner_structure.insert_str(6, &data);
     new_inner_structure.insert_str(9+d_len, &n);
-    println!("{}", middle_structure.clone());
     if top_down == true
     {
         middle_structure.insert_str(4, &key);//shifted both up by two compared to bottom up json
@@ -176,7 +187,6 @@ pub fn make_entry(mut json_block: String, key: String, data:  String, n: String,
         middle_structure.insert_str(2, &key);
         middle_structure.insert_str(4+t_len, &new_inner_structure);
     }
-    println!("{}", middle_structure.clone());
     if top_down == false
     {
         json_block.insert_str(3, &middle_structure);    
@@ -191,7 +201,7 @@ pub fn make_entry(mut json_block: String, key: String, data:  String, n: String,
                                                 //first entry, additional entrys will add a comma
                                                 //to the end of the previous entry instead of at
                                                 //the end of the new entry as will be the default
-                                                //case*/
+                                                //case
     return json_block;    
 }
 
@@ -259,7 +269,6 @@ pub fn do_if_logic
     }
     return json_block;
 }
-
 
 
 pub fn update_entry
@@ -350,4 +359,4 @@ pub fn update_entry
     json_block = json_block.replace(&compare_model, &new_model);
     //dbg!(&json_block);
     return json_block;
-}
+}*/
