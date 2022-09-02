@@ -120,6 +120,9 @@ pub fn get_file(full_filename: String, mut exists: bool) -> (String, bool)
     return (filecontents, exists);
 }
 
+//init json and make first entry are json-direction 'agnostic' meaning they are unbiased to the
+//future choice of your json structure as they only are called to make the first entry...
+
 pub fn init_json( jstructure: Json_Structures ) -> String
 {
     let mut outer_structure = jstructure.outer;
@@ -324,6 +327,13 @@ pub fn update_entry
     let mut middle_structure = jstructure.middle.clone();
     let mut final_inner_structure = jstructure.final_inner.clone();
     let compare_model: String;
+    //this function should theoretically also be direction agnostic as it only replaces the part of
+    //the entry that is contained within the comma seperators. theoretically as long as it modifys
+    //json that was valid it should not need to know which direction to go. this could be added but
+    //seems wasteful and doesn't really make much sense for large data structures that are just
+    //going to be computed on anyway. If a human has to read the json output regularly perhaps
+    //adding reordering updated entries would be useful? For example to view newest to latest
+    //order.
     middle_structure.insert_str(2, &key);
     final_inner_structure.insert_str(6, &data);
     final_inner_structure.insert_str(9+d_len, &old_value.to_string());
