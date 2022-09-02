@@ -168,12 +168,12 @@ pub fn make_entry(mut json_block: String, key: String, data:  String, n: String,
     println!("{}", middle_structure.clone());
     if top_down == true
     {
-        middle_structure.insert_str(4, &key);//shifted both up by two
+        middle_structure.insert_str(4, &key);//shifted both up by two compared to bottom up json
         middle_structure.insert_str(6+t_len, &new_inner_structure);
     }
     else
     {
-        middle_structure.insert_str(2, &key);//shifted both up by two
+        middle_structure.insert_str(2, &key);
         middle_structure.insert_str(4+t_len, &new_inner_structure);
     }
     println!("{}", middle_structure.clone());
@@ -183,7 +183,7 @@ pub fn make_entry(mut json_block: String, key: String, data:  String, n: String,
     }
     else
     {
-        json_block.insert_str((json_block.len() - 3), &middle_structure)
+        json_block.insert_str((json_block.len() - 3), &middle_structure)//inserting in the length - 3 gives the next spot for top down
     }
         //thought: to do top down json just insert this in (json_block.len() - 3) and have \n 
                                                 //at the start of the new entry aka middle
