@@ -14,9 +14,11 @@ use crate::LinearFn::{MakeEntry, UpdateEntry};
 pub struct Json_Structures
 {
     pub outer: String,
-    pub middle: String, 
-    pub new_inner: String, //this implementation uses one data field and adds new entrys at the top, 
-    pub final_inner: String//later implementations will address more complex directionality
+    pub middle: String,
+    pub middle_top_down: String,
+    pub new_inner: String, //this implementation uses one data field and adds new entrys at the top,
+    pub new_inner_top_down: String, //
+    pub final_inner: String //later implementations will address more complex directionality
 }
 #[derive(Clone)]
 pub enum Operations
@@ -41,11 +43,14 @@ pub enum LinearFn
 
 pub fn main() 
 {
+    let top_down: bool = false;
     let jstructure = Json_Structures 
     {
         outer: "[{\n\n}]".to_string(),
         middle: "\t\"\":".to_string(),
+        middle_top_down: ",\n\t\"\":".to_string(),
         new_inner: "\n\t\t[{\"\": }],\n".to_string(),
+        new_inner_top_down: "\n\t\t[{\"\": }]".to_string(),
         final_inner: "\n\t\t[{\"\": }]".to_string()
     };
     //format:
@@ -68,11 +73,14 @@ pub fn main()
         json_block.clone().to_string(), "key0".to_string(), "data".to_string(), "6".to_string()
     );
     json_block = make_entry(
-        json_block.clone().to_string(), "key1".to_string(), "data".to_string(), "6".to_string(), jstructure
+        json_block.clone().to_string(), "key7".to_string(), "data".to_string(), "420".to_string(), jstructure, top_down
     );*/
+    json_block = make_entry(
+        json_block.clone().to_string(), "key420".to_string(), "data".to_string(), "4233330".to_string(), jstructure, top_down
+    );
     //json_block = update_entry(json_block.clone(), "key1".to_string(), "data".to_string(), jstructure, ADD, 1);
     //overwrite_data(json_block.clone(), full_filename);
-    let mut keys = Vec::new();
+    /*let mut keys = Vec::new();
     keys.push("key0".to_string());
     keys.push("key1".to_string());
     keys.push("key2".to_string());
@@ -83,7 +91,8 @@ pub fn main()
         "data".to_string(), 
         "0".to_string(), 
         jstructure, 
-        Some(ADD), Some(1));
+        top_down,
+        Some(ADD), Some(1));*/
     overwrite_data(json_block.clone(), full_filename);
     dbg!(json_block.clone());
 }
@@ -93,6 +102,7 @@ pub fn overwrite_data(json_block: String, full_filename: String)
     let mut  file = File::create(full_filename.clone()).expect("error opening json file");
     file.write_all(&json_block.as_bytes()).expect("error writing to selected json file");
 }
+
 pub fn get_file(full_filename: String, mut exists: bool) -> (String, bool)
 {
     let mut filecontents = String::new();
@@ -134,19 +144,51 @@ pub fn make_first_entry(mut json_block: String, key: String, data:  String, n: S
     return json_block;
 }
 
-pub fn make_entry(mut json_block: String, key: String, data:  String, n: String, jstructure: Json_Structures) -> String
+pub fn make_entry(mut json_block: String, key: String, data:  String, n: String, jstructure: Json_Structures, top_down: bool) -> String
 {
     let t_len = key.len();
     let d_len = data.len();
-    let mut new_inner_structure = jstructure.new_inner;
-    let mut middle_structure = jstructure.middle;
+    let mut new_inner_structure: String;
+    let mut middle_structure: String;
+    if top_down == false
+    {
+        new_inner_structure = jstructure.new_inner;
+        middle_structure = jstructure.middle;
+    }
+    else
+    {
+        new_inner_structure = jstructure.new_inner_top_down;
+        middle_structure = jstructure.middle_top_down;
+    }
     new_inner_structure.insert_str(6, &data);
     new_inner_structure.insert_str(9+d_len, &n);
-    middle_structure.insert_str(2, &key);
-    middle_structure.insert_str(4+t_len, &new_inner_structure);
-    json_block.insert_str(3, &middle_structure);//thought: to do top down json just insert this in (json_block.len() - 3) and have \n 
+    println!("{}", middle_structure.clone());
+    if top_down == true
+    {
+        middle_structure.insert_str(4, &key);//shifted both up by two
+        middle_structure.insert_str(6+t_len, &new_inner_structure);
+    }
+    else
+    {
+        middle_structure.insert_str(2, &key);//shifted both up by two
+        middle_structure.insert_str(4+t_len, &new_inner_structure);
+    }
+    println!("{}", middle_structure.clone());
+    if top_down == false
+    {
+        json_block.insert_str(3, &middle_structure);    
+    }
+    else
+    {
+        json_block.insert_str((json_block.len() - 3), &middle_structure)
+    }
+        //thought: to do top down json just insert this in (json_block.len() - 3) and have \n 
                                                 //at the start of the new entry aka middle
-                                                //structure
+                                                //structure. This also means that starting from
+                                                //first entry, additional entrys will add a comma
+                                                //to the end of the previous entry instead of at
+                                                //the end of the new entry as will be the default
+                                                //case*/
     return json_block;    
 }
 
@@ -159,7 +201,8 @@ pub fn do_if_logic
     disqualified_function: Option<String>,
     data: String, 
     n: String, 
-    jstructure: Json_Structures,  
+    jstructure: Json_Structures,
+    top_down: bool,
     opt: Option<Operations>,
     opt_val: Option<i64>
 ) -> String
@@ -197,7 +240,8 @@ pub fn do_if_logic
                     x.clone(), 
                     data.clone(), 
                     n.clone(), 
-                    jstructure.clone()
+                    jstructure.clone(),
+                    top_down.clone()
                 ),
                 UpdateEntry => json_block = update_entry(
                     json_block.clone(), 
@@ -224,13 +268,13 @@ pub fn update_entry
     let mut uopt: Operations = ADD;
     match opt
     {
-        Some(ref Operations) => uopt = opt.clone().unwrap(),
+        Some(ref Operations) => uopt = opt.clone().expect("error parsing operation"),
         None => println!("must provide an operation to call update entry function\nno operation provided")
     };
     let mut uopt_val: i64 = 0;
     match opt_val
     {
-        Some(i64) => uopt_val = opt_val.unwrap(),
+        Some(i64) => uopt_val = opt_val.expect("error parsing operation value"),
         None => println!("must provide an operation-value to modify original value with\n no operation-value provided")
     };
     let d_len = data.len();
