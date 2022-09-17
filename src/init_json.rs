@@ -1,13 +1,4 @@
-#[derive(Clone)]
-pub struct Json_Structures
-{
-    pub outer: String,
-    pub middle: String,
-    pub middle_top_down: String,
-    pub new_inner: String, //this implementation uses one data field and adds new entrys at the top,
-    pub new_inner_top_down: String, //
-    pub final_inner: String //later implementations will address more complex directionality
-}
+use crate::Json_Structures;
 //init json and make first entry are json-direction 'agnostic' meaning they are unbiased to the
 //future choice of your json structure as they only are called to make the first entry...
 pub fn init_json( jstructure: Json_Structures ) -> String

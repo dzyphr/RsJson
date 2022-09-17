@@ -33,7 +33,7 @@ pub fn update_entry
         if (&i == &jObj.clone()[0].len()) && (was_found == false)
         {
             println!("The selected Key was NOT found in the json object!");
-            exit(1);
+//            exit(1);
         }
     }
     let new_val: i64;

@@ -1,6 +1,6 @@
 use serde_json::Value;
 use crate::Logic;
-use crate::Logic::{ True, False };
+use crate::Logic::{ Found, NotFound };
 use crate::LinearFn;
 use crate::LinearFn::{ MakeEntry, UpdateEntry };
 use crate::{ Json_Structures, Operations, make_entry, update_entry };
@@ -13,7 +13,7 @@ pub fn do_if_logic
     qualified_function: LinearFn,
     disqualified_function: Option<String>,
     data: String,
-    n: String,
+    n: Option<String>,
     jstructure: Json_Structures,
     top_down: bool,
     opt: Option<Operations>,
@@ -23,8 +23,8 @@ pub fn do_if_logic
     let bCheck: bool;
     match qualifier
     {
-        True => bCheck = true,
-        False => bCheck = false,
+        Found => bCheck = true,
+        NotFound => bCheck = false,
     }
     let mut keyVals: HashMap<String, bool> = HashMap::new();
     for i in 0..keys.len()
@@ -52,7 +52,7 @@ pub fn do_if_logic
                     json_block.clone(),
                     x.clone(),
                     data.clone(),
-                    n.clone(),
+                    n.as_ref().unwrap().clone(),
                     jstructure.clone(),
                     top_down.clone()
                 ),
