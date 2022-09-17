@@ -126,7 +126,7 @@ pub fn main()
      * use the make_entry() function:
      *
      * this can be used continuously as soon as the json has its first entry it will append the
-     * next on properly. This one has the same parameters as make_first_entry() and
+     * next one properly. This one has the same parameters as make_first_entry() and
      * also requires you to pass in the jstructure & pass in the
      * top_down variable if you made one, otherwise just pass in true for top down or false for bottom up.
      *
