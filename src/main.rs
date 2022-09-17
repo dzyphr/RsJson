@@ -234,14 +234,13 @@ pub fn main()
     //  8)
     json_block = update_entry(
         json_block.clone(), 
-        "key1".to_string(), 
+        "key0".to_string(), 
         "data".to_string(), 
         jstructure.clone(), 
         Some(ADD), Some(1)
     );
     //  9)
     let mut keys = Vec::new();
-    keys.push("key0".to_string());
     keys.push("key1".to_string());
     keys.push("key2".to_string());
     json_block = do_if_logic(
