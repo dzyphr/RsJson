@@ -18,12 +18,15 @@ pub mod do_if_logic;
 use crate::do_if_logic::do_if_logic;
 pub mod update_entry;
 use crate::update_entry::update_entry;
+pub mod get_val_i64;
+use crate::get_val_i64::get_val_i64;
 extern crate serde_json;
 use serde_json::Value;
 use std::{collections::{HashMap}, process::{exit}};
 use crate::Operations::{ADD, SUB, MTP, DIV};
 use crate::Logic::{Found, NotFound};
 use crate::LinearFn::{MakeEntry, UpdateEntry};
+use std::fs;
 #[derive(Clone)]
 pub struct Json_Structures
 {
@@ -234,14 +237,13 @@ pub fn main()
     //  8)
     json_block = update_entry(
         json_block.clone(), 
-        "key1".to_string(), 
+        "key0".to_string(), 
         "data".to_string(), 
         jstructure.clone(), 
         Some(ADD), Some(1)
     );
     //  9)
     let mut keys = Vec::new();
-    keys.push("key0".to_string());
     keys.push("key1".to_string());
     keys.push("key2".to_string());
     json_block = do_if_logic(
@@ -257,5 +259,53 @@ pub fn main()
     //  7)
     overwrite_data(json_block.clone(), full_filename.clone());
     dbg!(json_block.clone());
+    let myval = get_val_i64(full_filename, "key0".to_string(), "data".to_string());
+    dbg!(myval);
+}
+/*
+fn get_val_i64(full_filename: String, key: String, data_field: String) -> i64
+{
+    let mut exists = false;
+    let json_block: String;
+    (json_block, exists) = get_file(full_filename.clone(), exists);
+    let mut value = 0;
+    match(exists)
+    {
+        false => no_file(full_filename.clone()),
+        true => value = check_file(json_block, full_filename, key, data_field)
+    }
+    fn no_file(full_filename: String)
+    {
+        println!("expected json file was not found");
+        fs::remove_file(full_filename.clone()).expect("error removing temp file");
+    }
+    fn check_file(json_block: String, full_filename: String, key: String, data_field: String) -> i64
+    {
+        let jObj: Vec<HashMap<String, Value>> = serde_json::from_str(&json_block).expect("error indexing into json object");
+        let mut i = 0;
+        let mut was_found = false;
+        let mut old_value = 0;
+        for (x, y) in  &jObj.clone()[0]
+        {
+            i = i + 1;
+            if x == &key
+            {
+                old_value = y[0][data_field.clone()].as_i64().expect("error parsing data as i64");
+                dbg!(old_value.clone());
+                was_found = true;
+            }
+            if (&i == &jObj.clone()[0].len()) && (was_found == false)
+            {
+                println!("The selected Key was NOT found in the json object!");
+            }
+        }
+        return old_value;
+    }
+    return value;
+}
+*/
+fn get_val_string(full_filename: String, key: String, data_field: String) -> String
+{
+    return "temp".to_string();
 }
 

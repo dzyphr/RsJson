@@ -18,12 +18,15 @@ pub mod do_if_logic;
 use crate::do_if_logic::do_if_logic;
 pub mod update_entry;
 use crate::update_entry::update_entry;
+pub mod get_val_i64;
+use crate::get_val_i64::get_val_i64;
 extern crate serde_json;
 use serde_json::Value;
 use std::{collections::{HashMap}, process::{exit}};
 use crate::Operations::{ADD, SUB, MTP, DIV};
 use crate::Logic::{Found, NotFound};
 use crate::LinearFn::{MakeEntry, UpdateEntry};
+use std::fs;
 #[derive(Clone)]
 pub struct Json_Structures
 {
@@ -256,5 +259,17 @@ pub fn main()
     //  7)
     overwrite_data(json_block.clone(), full_filename.clone());
     dbg!(json_block.clone());
+    let myval = get_val_i64(full_filename, "key0".to_string(), "data".to_string());
+    dbg!(myval);
+}
+/*
+fn get_val_string(full_filename: String, key: String, data_field: String) -> String
+{
+    return "temp".to_string();
 }
 
+fn get_val_bool(full_filename: String, key: String, data_field: String) -> bool
+{
+    return false;
+}
+*/

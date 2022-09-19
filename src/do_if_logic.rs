@@ -11,7 +11,7 @@ pub fn do_if_logic
     keys: Vec<String>,
     qualifier: Logic,
     qualified_function: LinearFn,
-    disqualified_function: Option<String>,
+    disqualified_function: Option<LinearFn>,
     data: String,
     n: Option<String>,
     jstructure: Json_Structures,
@@ -64,6 +64,29 @@ pub fn do_if_logic
                     opt.clone(),
                     opt_val.clone()
                 )
+            };
+        }
+        else
+        {
+            match disqualified_function.clone()
+            {
+                Some(MakeEntry) => json_block = make_entry(
+                    json_block.clone(),
+                    x.clone(),
+                    data.clone(),
+                    n.as_ref().unwrap().clone(),
+                    jstructure.clone(),
+                    top_down.clone()
+                ),
+                Some(UpdateEntry) => json_block = update_entry(
+                    json_block.clone(),
+                    x.clone(),
+                    data.clone(),
+                    jstructure.clone(),
+                    opt.clone(),
+                    opt_val.clone()
+                ),
+                None => continue
             };
         }
     }
